@@ -333,3 +333,99 @@ ai-rag-0/
 ## 📄 License
 
 MIT License — 自由使用、修改、分發
+
+---
+
+## 🔁 下次繼續開發（重要！請勿刪除此節）
+
+> 如果你關閉了 Copilot / AI 助手，重新開始時請跟以下步驟操作。
+
+### Step 1 — 告訴 AI 助手讀取項目
+
+複製以下提示語，貼到新的 Copilot / AI 對話框：
+
+```
+請閱讀 https://github.com/SpaceMichael/ai-rag-0 的 README.md 和
+RAG_PROJECT_PLAN_V2.md，然後繼續開發這個項目。
+我叫你做 Sally（超級軟件工程師），請用中文回應我。
+```
+
+### Step 2 — 拉最新代碼
+
+```bash
+git clone https://github.com/SpaceMichael/ai-rag-0.git
+cd ai-rag-0
+# 或如已有本地版本：
+git pull origin master
+```
+
+### Step 3 — 建立 Python 環境
+
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# Linux / Mac
+python -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+### Step 4 — 設定環境變數
+
+```bash
+copy .env.example .env   # Windows
+cp .env.example .env     # Linux/Mac
+```
+
+編輯 `.env`，最少要填：
+```env
+AI_PROVIDER=ollama          # 或 gemini / openai
+POSTGRES_PASSWORD=你的密碼
+DATABASE_URL=postgresql://postgres:你的密碼@localhost:5432/ai_rag_db
+```
+
+### Step 5 — 準備外部服務
+
+```bash
+# PostgreSQL：建立數據庫 + 啟用 pgvector
+psql -U postgres -c "CREATE DATABASE ai_rag_db;"
+psql -U postgres -d ai_rag_db -c "CREATE EXTENSION IF NOT EXISTS vector;"
+
+# Ollama（如用本地 AI）：下載模型
+ollama pull nomic-embed-text
+ollama pull llama3.2
+```
+
+### Step 6 — 初始化數據庫並啟動
+
+```bash
+# 初始化數據庫表
+python scripts/init_db.py
+
+# 終端 1：啟動後端 API
+uvicorn app.main:app --reload --port 8000
+
+# 終端 2：啟動前端 UI
+streamlit run ui/streamlit_app.py --server.port 8501
+```
+
+### Step 7 — 重新上傳知識庫文件
+
+> ⚠️ 向量數據存在 PostgreSQL，不在 Git 裡。每次在新機器部署後，需要重新上傳文件。
+
+打開 http://localhost:8501，在左側欄上傳你的 PDF / Word / CSV 等文件。
+
+### 📌 項目現有 Roadmap（下次繼續的方向）
+
+詳見 [RAG_PROJECT_PLAN_V2.md](RAG_PROJECT_PLAN_V2.md) 第九節「設計漏洞審查」。
+
+待辦事項（優先順序）：
+- [ ] 加入 API Key 認證（防止未授權訪問）
+- [ ] 加入文件哈希去重（防止重複上傳）
+- [ ] Redis 快取（相同問題直接返回）
+- [ ] RAGAS 自動評估腳本
+- [ ] Docker Compose 一鍵部署
+- [ ] Anthropic Claude 完整 Embedding 支援（目前 fallback Ollama）
