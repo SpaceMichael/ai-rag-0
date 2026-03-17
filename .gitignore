@@ -1,0 +1,29 @@
+# ai-rag-0 .gitignore
+
+# 環境變數（含 API Keys，絕對不提交）
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# 日誌
+logs/
+*.log
+
+# 測試覆蓋率
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# 臨時文件
+tmp/
+temp/
