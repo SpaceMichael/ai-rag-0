@@ -82,8 +82,12 @@ class TextChunker:
                 # 如果單個分割已超過 chunk_size，遞歸細分
                 if len(split) > self.chunk_size and len(separators) > 1:
                     sub_chunks = self._recursive_split(split, separators[1:])
-                    final_chunks.extend(sub_chunks[:-1])
-                    current_chunk = sub_chunks[-1] if sub_chunks else split
+                    if sub_chunks:
+                        final_chunks.extend(sub_chunks[:-1])
+                        current_chunk = sub_chunks[-1]
+                    else:
+                        logger.warning(f"⚠️ 無法細分超大塊（{len(split)} 字符），保留原塊")
+                        current_chunk = split
                 else:
                     current_chunk = split
 

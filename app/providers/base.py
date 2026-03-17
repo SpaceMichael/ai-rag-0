@@ -3,7 +3,7 @@ app/providers/base.py — AI 供應商抽象基類（Strategy Pattern）
 所有供應商必須實現此介面，確保可互換
 """
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -13,7 +13,7 @@ class LLMResponse:
     model: str
     provider: str
     tokens_used: int = 0
-    raw_response: dict = None
+    raw_response: dict = field(default=None)  # 明確使用 field() 避免可變默認值歧義
 
 
 class BaseAIProvider(ABC):

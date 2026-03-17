@@ -49,6 +49,9 @@ class VectorStore:
         top_k = top_k or settings.top_k_results
         query_embedding = self.provider.embed(query)
 
+        # 將向量轉為 pgvector 接受的格式："[0.1, 0.2, ...]"
+        embedding_str = "[" + ",".join(str(v) for v in query_embedding) + "]"
+
         results = self.db.execute(
             text("""
                 SELECT
@@ -62,7 +65,7 @@ class VectorStore:
                 ORDER BY embedding <=> CAST(:embedding AS vector)
                 LIMIT :top_k
             """),
-            {"embedding": str(query_embedding), "top_k": top_k},
+            {"embedding": embedding_str, "top_k": top_k},
         ).fetchall()
 
         docs = []
